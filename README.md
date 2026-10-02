@@ -9,6 +9,7 @@ Tools and reference material for Enterprise AI RTB/SCRM program management — p
 | [`docs/onboarding-checklist.md`](docs/onboarding-checklist.md) | GitHub, DevEx CLI, and Microsoft 365 Copilot setup checklist for new team members (ref. STSK0760136) |
 | [`docs/portfolio-taxonomy.md`](docs/portfolio-taxonomy.md) | Shared workstream taxonomy and report-out structure (ref. STSK0760142) |
 | [`docs/weekly-reporting-cadence.md`](docs/weekly-reporting-cadence.md) | Friday/Monday reporting cadence and RAG review template (ref. STSK0760141) |
+| [`docs/devx-cli-table-discovery.md`](docs/devx-cli-table-discovery.md) | How to find an unknown ServiceNow table/role via `devx-cli` when no dedicated command covers it |
 | [`reporting/`](reporting/) | The Weekly Reporting Suite: five report generators (Executive Dashboard, Leadership Readout, Operations & Model Health, Governance & Portfolio, Core Team Action) plus an orchestrator, and the Python starter code that backs them |
 
 ## Relationship to the Claude Code skill
