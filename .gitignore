@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+.venv/
+venv/
+.DS_Store
+
+# Generated reports (contain live ServiceNow data — don't commit)
+Weekly Reports/
+
+# Real secrets never belong in this repo — only op:// references do.
+# See .env.1password.example and run_with_1password.sh.
+.env
+.env.*
+!.env.1password.example
