@@ -19,6 +19,7 @@ by piping credentials into devx-cli yourself — there's no supported way to.
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 from typing import Any
 
@@ -47,12 +48,32 @@ def run(args: list[str]) -> Any:
             f"devx-cli {' '.join(args)} failed: {exc.stderr.strip()}"
         ) from exc
 
+    return parse_output(result.stdout)
+
+
+def parse_output(stdout: str) -> Any:
+    """Decode structured output without reconstructing terminal display wrapping."""
+    text = re.sub(r"\x1b\[[0-9;]*m", "", stdout).strip()
     try:
-        return json.loads(result.stdout)
-    except json.JSONDecodeError as exc:
-        raise DevxCliError(
-            f"devx-cli {' '.join(args)} returned non-JSON output"
-        ) from exc
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+    count = re.search(r"Returned (\d+) record\(s\)", text)
+    if count is None:
+        raise DevxCliError("devx-cli returned non-JSON output")
+    prefix = text[:count.start()]
+    if re.search(r"not authorized|invalid table|not authenticated", prefix, re.I):
+        raise DevxCliError("devx-cli reported an access or query error")
+    for candidate in re.finditer(r"[\[{]", text[count.end():]):
+        try:
+            data, end = json.JSONDecoder().raw_decode(text[count.end() + candidate.start():])
+        except json.JSONDecodeError:
+            continue
+        if isinstance(data, list) and len(data) == int(count.group(1)):
+            return data
+    if int(count.group(1)) == 0 and not re.search(r"not authorized|invalid table|not authenticated", text, re.I):
+        return []
+    raise DevxCliError("devx-cli record count or structured output is incomplete")
 
 
 def list_records(command: str, story: str | None = None, query: str | None = None, limit: int = 50) -> Any:
@@ -71,18 +92,32 @@ def list_records(command: str, story: str | None = None, query: str | None = Non
     return run(args)
 
 
-def query_table(table: str, encoded_query: str | None = None, limit: int = 50) -> Any:
+def query_table(
+    table: str,
+    encoded_query: str | None = None,
+    limit: int = 50,
+    *,
+    fields: str | None = None,
+    offset: int | None = None,
+    display_value: str | None = None,
+) -> Any:
     """Generic Table API passthrough via devx-cli's `query` command.
 
     This is the only path to categories with no dedicated devx-cli command
     (risks, milestones, problems, AI Control Tower, model inventory, audit
     findings — see ../../data-sources.md). Table names for most of these
-    are unverified on this instance — confirm with
-    `devx-cli dev:table-schema-get --table <table>` before trusting results,
+    are unverified on this instance — discover through `sys_db_object` and
+    confirm a candidate with a bounded read before trusting results,
     and do not silently treat an empty/erroring response as "no records."
     """
     args = ["query", "--table", table]
     if encoded_query:
         args += ["--query", encoded_query]
     args += ["--limit", str(limit)]
+    if fields is not None:
+        args += ["--fields", fields]
+    if offset is not None:
+        args += ["--offset", str(offset)]
+    if display_value is not None:
+        args += ["--display-value", display_value]
     return run(args)

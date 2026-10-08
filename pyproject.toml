@@ -7,6 +7,12 @@ dependencies = []
 
 [project.optional-dependencies]
 dev = ["pytest"]
+inventory = ["openpyxl>=3.1,<4"]
+
+[project.scripts]
+pmo-aict-change-plan = "eai_pmo_tools.aict_change_plan:main"
+pmo-aict-review = "eai_pmo_tools.aict_review:main"
+pmo-aict-workbooks = "eai_pmo_tools.aict_workbooks:main"
 
 [tool.setuptools.packages.find]
 where = ["reporting/src"]

@@ -1,0 +1,18 @@
+{
+  "name": "eai-pmo-tools",
+  "version": "0.1.0",
+  "description": "Six AICT PMO skills with offline change planning, evidence review, and workbook safety helpers. Live saves and sharing remain human-controlled.",
+  "author": {
+    "name": "Peter Lewis Swimm"
+  },
+  "keywords": [
+    "aict",
+    "servicenow",
+    "pmo",
+    "inventory",
+    "stakeholders"
+  ],
+  "skills": [
+    "./.claude/skills"
+  ]
+}

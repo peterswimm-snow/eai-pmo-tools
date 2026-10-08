@@ -1,0 +1,14 @@
+{
+  "name": "eai-pmo-marketplace",
+  "description": "Enterprise AI PMO skills for AICT inventory review, stakeholder confirmation, documentation readiness, and human-controlled change handoffs.",
+  "owner": {
+    "name": "Peter Lewis Swimm"
+  },
+  "plugins": [
+    {
+      "name": "eai-pmo-tools",
+      "source": "./",
+      "description": "AICT inventory review, stakeholder and documentation evidence checks, browser-update handoffs, and safe workbook sharing."
+    }
+  ]
+}
